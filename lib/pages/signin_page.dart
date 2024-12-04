@@ -1,4 +1,5 @@
 import 'package:Udyojak/pages/signup_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 
@@ -156,7 +157,12 @@ class _SignInPageState extends State<SignInPage> {
                       borderRadius: BorderRadius.circular(10),  // Rounded corners for the button
                     ),
                   ),
-                  onPressed: signIn,  // Call sign-in method when button is pressed
+                  onPressed: () {
+                    FirebaseAuth.instance.createUserWithEmailAndPassword(email: emailController.text, password: passwordController.text).then((value) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SignInSuccessPage()));
+                    },);
+
+                  },  // Call sign-in method when button is pressed
                   child: const Text(
                     "Sign In",  // Text on the button
                     style: TextStyle(fontSize: 18, color: Colors.white),

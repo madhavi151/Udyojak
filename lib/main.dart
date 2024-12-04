@@ -5,9 +5,6 @@ import 'package:Udyojak/pages/signup_page.dart';
 
 
 
-
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp ( options: const FirebaseOptions(apiKey: 'AIzaSyCq9Hv8p1W9w39gnuRyJZ2qPDIWdvtOQAM',
