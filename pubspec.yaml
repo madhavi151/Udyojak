@@ -1,0 +1,52 @@
+name: Udyojak
+description: "A new Flutter project."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  dio: ^5.7.0
+  firebase_core: ^3.8.0
+  firebase_storage: ^12.3.6
+  flutter:
+    sdk: flutter
+  http: ^1.2.2
+  provider: ^6.0.5
+  carousel_slider: ^4.0.0
+  change_app_package_name: ^1.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/image/WelcomeLogo.jpg
+    - assets/image/cloth.jpg
+    - assets/image/jewellery.jpg
+    - assets/image/framework.webp
+    - assets/image/paper_quilling.webp
+    - assets/image/footwear.jpg
+    - assets/image/wall_art.jpg
+    - assets/image/scrunchies.webp
+    - assets/image/waffles.jpg
+    - assets/image/handcrafts.webp
+    - assets/image/Artdea.png
+    - assets/image/Bridemakeup.webp
+    - assets/image/WelcomeLogo.jpg
+    - assets/image/dessertjunction.jpg
+    - assets/image/truffle.jpg
+    - assets/image/blackforest.jpg
+    - assets/image/caramel1.jpg
+    - assets/image/strawberry.jpg
+    - assets/image/mixfruit.jpg
+    - assets/image/pineapple.jpg
+    - assets/image/butter.jpg
+    - assets/image/biscoff.jpg
+    - assets/image/bluecake.jpg
+
