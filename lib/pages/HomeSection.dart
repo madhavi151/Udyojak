@@ -66,7 +66,7 @@ class HomeSection extends StatelessWidget {
       "products": [
         Product(
             name: "Chocolate Dutch truffle",
-            image: "assets/image/truffle.jpg",
+            image: "Arted",
             price: 1350),
         Product(
             name: "Black forest",
