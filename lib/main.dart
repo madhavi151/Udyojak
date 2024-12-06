@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:Udyojak/pages/signin_page.dart';
 import 'package:Udyojak/pages/signup_page.dart';
-import 'package:Udyojak/pages/HomeSection.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

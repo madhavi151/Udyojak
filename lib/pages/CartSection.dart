@@ -1,26 +1,65 @@
 import 'package:flutter/material.dart';
-import 'HomeSection.dart';
-import 'PaymentPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'DeliveryDetailsPage.dart'; // Your delivery details screen
+import 'PaymentPage.dart'; // Payment screen for selecting the payment method
+import 'HomeSection.dart'; // If needed for navigation
 
 class CartSection extends StatelessWidget {
   final List<Product> cart;
   final Function(Product) removeFromCart;
+  final Function() clearCart;
   final double totalAmount;
 
   const CartSection({
     super.key,
     required this.cart,
     required this.removeFromCart,
+    required this.clearCart,
     required this.totalAmount,
   });
 
-  void navigateToPayment(BuildContext context) {
+  // Method to navigate to the payment screen
+  void navigateToPaymentScreen(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PaymentScreen(totalAmount: totalAmount),
+        builder: (context) => PaymentScreen(
+          totalAmount: totalAmount,
+          cart: cart,
+        ),
       ),
     );
+  }
+
+  // Method to save the order to Firestore
+  Future<void> saveOrderToFirestore(
+      String address, String phoneNumber, bool isDoorstepDelivery) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print('User not logged in');
+      return;
+    }
+
+    try {
+      // Save the order details in Firestore
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).collection('orders').add({
+        'orderId': DateTime.now().millisecondsSinceEpoch.toString(),
+        'products': cart.map((product) => {
+          'name': product.name,
+          'price': product.price,
+          'image': product.image,  // Including image if needed
+        }).toList(),
+        'totalAmount': totalAmount,
+        'address': address,
+        'phoneNumber': phoneNumber,
+        'isDoorstepDelivery': isDoorstepDelivery,
+        'orderDate': DateTime.now(),
+      });
+      print('Order saved to Firestore');
+    } catch (e) {
+      print('Error saving order: $e');
+    }
   }
 
   @override
@@ -45,8 +84,7 @@ class CartSection extends StatelessWidget {
               itemBuilder: (context, index) {
                 return Card(
                   elevation: 5,
-                  margin:
-                  const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                   child: ListTile(
                     contentPadding: const EdgeInsets.all(8),
                     leading: ClipRRect(
@@ -91,13 +129,19 @@ class CartSection extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
-              onPressed: () => navigateToPayment(context),
+              onPressed: cart.isEmpty
+                  ? null // Disable the button if cart is empty
+                  : () {
+                // Open the delivery details page, and when the order is submitted,
+                // navigate to the payment screen
+                navigateToPaymentScreen(context);
+              },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: cart.isEmpty ? Colors.grey : Colors.green, // Change color if empty
                 minimumSize: Size(double.infinity, 50),
               ),
               child: Text(
-                'Select Payment Method',
+                'Proceed to Payment',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
@@ -107,5 +151,3 @@ class CartSection extends StatelessWidget {
     );
   }
 }
-
-

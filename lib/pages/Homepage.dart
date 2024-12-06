@@ -1,10 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'HomeSection.dart';
 import 'ProfileSection.dart';
 import 'CartSection.dart';
 import 'SearchSection.dart';
-
-
 
 void main() {
   runApp(const MyApp());
@@ -21,27 +20,37 @@ class _MyAppState extends State<MyApp> {
   bool _isDarkMode = false;
   final List<Product> _cart = [];
 
+  // Toggle dark mode
   void _toggleDarkMode(bool value) {
     setState(() {
       _isDarkMode = value;
     });
   }
 
+  // Add product to the cart
   void addToCart(Product product) {
     setState(() {
       _cart.add(product);
     });
   }
 
-
+  // Remove product from the cart
   void _removeFromCart(Product product) {
     setState(() {
       _cart.remove(product);
     });
   }
 
+  // Calculate total amount of items in the cart
   double _getTotalAmount() {
     return _cart.fold(0.0, (sum, product) => sum + product.price);
+  }
+
+  // Clear the cart
+  void _clearCart() {
+    setState(() {
+      _cart.clear();
+    });
   }
 
   @override
@@ -67,11 +76,11 @@ class _MyAppState extends State<MyApp> {
         addToCart: addToCart,
         removeFromCart: _removeFromCart,
         totalAmount: _getTotalAmount(),
+        clearCart: _clearCart,  // Passing clearCart to HomePage
       ),
     );
   }
 }
-
 
 class HomePage extends StatefulWidget {
   final bool isDarkMode;
@@ -80,6 +89,7 @@ class HomePage extends StatefulWidget {
   final Function(Product) addToCart;
   final Function(Product) removeFromCart;
   final double totalAmount;
+  final Function() clearCart; // Added clearCart function
 
   const HomePage({
     super.key,
@@ -89,6 +99,7 @@ class HomePage extends StatefulWidget {
     required this.addToCart,
     required this.removeFromCart,
     required this.totalAmount,
+    required this.clearCart,  // Passing clearCart function
   });
 
   @override
@@ -111,15 +122,20 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return SearchSection(
           addToCart: widget.addToCart,
-          cart: widget.cart ,
+          cart: widget.cart,
         );
       case 2:
         return CartSection(
           cart: widget.cart,
           removeFromCart: widget.removeFromCart,
-          totalAmount: widget.totalAmount,
+          clearCart: widget.clearCart, // Passing clearCart to CartSection
+          totalAmount: widget.totalAmount, // Pass totalAmount to CartSection
         );
       case 3:
+        final user = FirebaseAuth.instance.currentUser;
+        final username = user?.displayName ?? "User";
+        final email = user?.email ?? "No email";
+
         return ProfileSection(
           isDarkMode: widget.isDarkMode,
           onDarkModeToggle: widget.onDarkModeToggle,

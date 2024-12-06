@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'AppearanceSettingsPage.dart';
-import 'DetailsPage.dart';
-import 'signin_page.dart'; // Import SignInPage for navigation
+import 'EditPersonalDetailsPage.dart';
+import 'signin_page.dart';
+import 'OrderHistoryPage.dart'; // Import the OrderHistoryPage
 
-class ProfileSection extends StatelessWidget {
+class ProfileSection extends StatefulWidget {
   final bool isDarkMode;
   final Function(bool) onDarkModeToggle;
 
@@ -12,6 +15,45 @@ class ProfileSection extends StatelessWidget {
     required this.isDarkMode,
     required this.onDarkModeToggle,
   });
+
+  @override
+  _ProfileSectionState createState() => _ProfileSectionState();
+}
+
+class _ProfileSectionState extends State<ProfileSection> {
+  late String username;
+  late String email;
+  late String mobileNumber;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      email = user.email ?? 'No email';
+      username = user.displayName ?? 'No username'; // Fallback if displayName is not set
+      mobileNumber = 'Not Available'; // Firebase Auth does not store the phone number directly
+    } else {
+      email = 'No email';
+      username = 'No username';
+      mobileNumber = 'Not Available';
+    }
+  }
+
+  void updateDetails(String newUsername, String newEmail, String newMobileNumber) {
+    setState(() {
+      username = newUsername;
+      email = newEmail;
+      mobileNumber = newMobileNumber;
+    });
+
+    // You can also update Firebase here
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      user.updateDisplayName(newUsername);  // Update username
+      // Update the mobile number in Firebase if you're using Firebase Database or Firestore.
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,15 +81,16 @@ class ProfileSection extends StatelessWidget {
               context,
               icon: Icons.person,
               title: 'Personal Details',
-
+              subtitle: 'Username: $username\nEmail: $email\nMobile: $mobileNumber',
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const DetailsPage(
-                      title: "Personal Details",
-                      details: "Username: Madhavi\nEmail: @example.com\n"
-                          "Contact: 1234567890\nAddress: City, Country",
+                    builder: (_) => EditPersonalDetailsPage(
+                      username: username,
+                      email: email,
+                      mobileNumber: mobileNumber,
+                      onSave: updateDetails,
                     ),
                   ),
                 );
@@ -56,16 +99,12 @@ class ProfileSection extends StatelessWidget {
             _buildListTile(
               context,
               icon: Icons.history,
-              title: 'Order History ',
-             /// subtitle: 'Orders History',
+              title: 'Order History',
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const DetailsPage(
-                      title: "Order History",
-                      details: "No orders available.",
-                    ),
+                    builder: (_) => const OrderHistoryPage(), // Now no need to pass orderHistory
                   ),
                 );
               },
@@ -74,35 +113,14 @@ class ProfileSection extends StatelessWidget {
               context,
               icon: Icons.dark_mode,
               title: 'Appearance Settings',
-              subtitle: 'Dark Mode: ${isDarkMode ? 'Enabled' : 'Disabled'}',
+              subtitle: 'Dark Mode: ${widget.isDarkMode ? 'Enabled' : 'Disabled'}',
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => AppearanceSettingsPage(
-                      isDarkMode: isDarkMode,
-                      onDarkModeToggle: onDarkModeToggle,
-                    ),
-                  ),
-                );
-              },
-            ),
-
-            const SizedBox(height: 20),
-
-            // About App Section
-            _buildListTile(
-              context,
-              icon: Icons.info_outline,
-              title: 'About the App',
-              subtitle: 'Learn more about the features of the app.',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const DetailsPage(
-                      title: "About the App",
-                      details: "This is a sample app profile section.",
+                      isDarkMode: widget.isDarkMode,
+                      onDarkModeToggle: widget.onDarkModeToggle,
                     ),
                   ),
                 );
@@ -118,7 +136,8 @@ class ProfileSection extends StatelessWidget {
               title: 'Log Out',
               subtitle: 'Tap to log out from the app.',
               onTap: () {
-                // Navigate to SignInPage or SignUpPage
+                // Log out from Firebase
+                FirebaseAuth.instance.signOut();
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -127,8 +146,6 @@ class ProfileSection extends StatelessWidget {
                 );
               },
             ),
-
-            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -151,15 +168,15 @@ class ProfileSection extends StatelessWidget {
         const SizedBox(width: 20),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
-              'Madhavi Balsara',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              username,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             Text(
-              '@example.com',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              email,
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
             ),
           ],
         ),
