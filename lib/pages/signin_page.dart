@@ -1,9 +1,6 @@
-import 'package:Udyojak/pages/signup_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'HomePage.dart';  // Import your existing HomePage
 
-
-// Start of SignInPage Widget
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
 
@@ -12,45 +9,42 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  // Start of the form controllers
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
-  // Instance of AuthService to call sign-in functionality
-  final AuthService authService = AuthService();
-
-  // Form key to handle form validation
   final _formKey = GlobalKey<FormState>();
 
-  // State variables to manage loading and error messages
   bool isLoading = false;
   String? errorMessage;
 
-  // Start of sign-in method
   void signIn() async {
-    if (!_formKey.currentState!.validate()) return; // Return if form is invalid
+    if (!_formKey.currentState!.validate()) return;
 
     setState(() {
-      isLoading = true;  // Show loading indicator
-      errorMessage = null; // Reset any previous error messages
+      isLoading = true;
+      errorMessage = null;
     });
 
-    final email = emailController.text.trim();  // Get email input
-    final password = passwordController.text.trim();  // Get password input
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
 
-    final isSuccess = await authService.signIn(email, password); // Attempt sign-in
+    // Simulating sign-in (replace with actual authentication logic)
+    final isSuccess = await Future.delayed(const Duration(seconds: 2), () => true);
+
     setState(() {
-      isLoading = false;  // Hide loading indicator after response
+      isLoading = false;
     });
 
     if (isSuccess) {
+      // After successful sign-in, navigate to your existing HomePage
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const SignInSuccessPage()), // Navigate to success page
+        MaterialPageRoute(
+          builder: (context) => MyApp(), // Navigate to MyApp (HomePage will be part of it)
+        ),
       );
     } else {
       setState(() {
-        errorMessage = "Sign-In failed. Please try again.";  // Show error message if sign-in fails
+        errorMessage = "Sign-In failed. Please try again.";
       });
     }
   }
@@ -58,24 +52,23 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,  // Set background color
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
         child: Form(
-          key: _formKey,  // Form key for validation
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Start of Logo or Header Section
               Center(
                 child: Image.asset(
-                  'assets/image/WelcomeLogo.jpg', // Logo asset
-                  height: 100,  // Logo height
+                  'assets/image/WelcomeLogo.jpg', // Your logo
+                  height: 100,
                 ),
               ),
               const SizedBox(height: 20),
               const Text(
-                "Welcome Back!",  // Welcome message
+                "Welcome Back!",
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -84,157 +77,109 @@ class _SignInPageState extends State<SignInPage> {
               ),
               const SizedBox(height: 10),
               const Text(
-                "Sign in to continue your journey.",  // Subtext for sign-in prompt
+                "Sign in to continue your journey.",
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
               const SizedBox(height: 30),
 
-              // Start of Email Field
               TextFormField(
-                controller: emailController,  // Email controller to handle input
-                keyboardType: TextInputType.emailAddress,  // Set keyboard type for email
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  labelText: "Email",  // Label text for the email input field
+                  labelText: "Email",
+                  labelStyle: const TextStyle(color: Colors.black54),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),  // Rounded corners for input field
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Colors.grey),
                   ),
-                  prefixIcon: const Icon(Icons.email),  // Icon for email field
+                  prefixIcon: const Icon(Icons.email, color: Colors.redAccent),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Please enter your email.";  // Email validation for empty input
+                    return "Please enter your email.";
                   }
-                  if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+                  if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zAZ0-9.-]+\.[a-zA-Z]{2,}$")
                       .hasMatch(value)) {
-                    return "Please enter a valid email.";  // Email format validation
+                    return "Please enter a valid email.";
                   }
-                  return null;  // Return null if email is valid
+                  return null;
                 },
               ),
               const SizedBox(height: 20),
 
-              // Start of Password Field
               TextFormField(
-                controller: passwordController,  // Password controller to handle input
-                obscureText: true,  // Hide password characters
+                controller: passwordController,
+                obscureText: true,
                 decoration: InputDecoration(
-                  labelText: "Password",  // Label text for the password input field
+                  labelText: "Password",
+                  labelStyle: const TextStyle(color: Colors.black54),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),  // Rounded corners for input field
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Colors.grey),
                   ),
-                  prefixIcon: const Icon(Icons.lock),  // Icon for password field
+                  prefixIcon: const Icon(Icons.lock, color: Colors.redAccent),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Please enter your password.";  // Password validation for empty input
+                    return "Please enter your password.";
                   }
                   if (value.length < 6) {
-                    return "Password must be at least 6 characters.";  // Password length validation
+                    return "Password must be at least 6 characters.";
                   }
-                  return null;  // Return null if password is valid
+                  return null;
                 },
               ),
               const SizedBox(height: 20),
 
-              // Start of Error Message Section
               if (errorMessage != null)
-                Text(
-                  errorMessage!,  // Display error message if sign-in fails
-                  style: const TextStyle(color: Colors.red),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Text(
+                    errorMessage!,
+                    style: const TextStyle(color: Colors.red, fontSize: 16),
+                  ),
                 ),
-              const SizedBox(height: 10),
 
-              // Start of Sign-In Button
               isLoading
-                  ? const Center(child: CircularProgressIndicator())  // Show loading indicator if isLoading is true
+                  ? const Center(child: CircularProgressIndicator())
                   : SizedBox(
-                width: double.infinity,  // Full width for the button
+                width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,  // Button color
+                    backgroundColor: Colors.redAccent,
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),  // Rounded corners for the button
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  onPressed: () {
-                    FirebaseAuth.instance.createUserWithEmailAndPassword(email: emailController.text, password: passwordController.text).then((value) {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SignInSuccessPage()));
-                    },);
-
-                  },  // Call sign-in method when button is pressed
+                  onPressed: signIn,
                   child: const Text(
-                    "Sign In",  // Text on the button
+                    "Sign In",
                     style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
               ),
-
-              // Start of Sign-Up Navigation Section
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    "Don't have an account?",  // Text prompting user to sign up
-                    style: TextStyle(color: Colors.black),  // Text color changed to black
+                    "Don't have an account?",
+                    style: TextStyle(color: Colors.black),
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SignUpPage()),  // Navigate to sign-up page
-                      );
+                      // Add your sign-up navigation here
                     },
                     child: const Text(
-                      "Sign Up",  // Text for sign-up button
-                      style: TextStyle(color: Colors.red),
+                      "Sign Up",
+                      style: TextStyle(color: Colors.redAccent),
                     ),
                   ),
                 ],
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// Start of AuthService Class
-class AuthService {
-  // Simulating sign-in functionality
-  Future<bool> signIn(String email, String password) async {
-    await Future.delayed(const Duration(seconds: 2));  // Simulate a network request delay
-    return true;  // Return true for a successful sign-in (replace with actual API call)
-  }
-}
-
-// Start of SignInSuccessPage Widget
-class SignInSuccessPage extends StatelessWidget {
-  const SignInSuccessPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.check_circle, size: 100, color: Colors.green),  // Success icon
-            const SizedBox(height: 20),
-            const Text(
-              "Sign-In Successful!",  // Success message text
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);  // Navigate back to home/dashboard
-              },
-              child: const Text("Go to Dashboard"),  // Button to go to dashboard
-            ),
-          ],
         ),
       ),
     );

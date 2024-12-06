@@ -1,19 +1,19 @@
-import 'package:Udyojak/pages/demo.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:Udyojak/pages/signin_page.dart';
 import 'package:Udyojak/pages/signup_page.dart';
 
-
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp ( options: const FirebaseOptions(apiKey: 'AIzaSyCq9Hv8p1W9w39gnuRyJZ2qPDIWdvtOQAM',
-    appId: '1:825527275199:android:f9e2768a3629024e6b000a',
-    messagingSenderId: '825527275199',
-    projectId: 'udyojak-ac670',
-    storageBucket: 'udyojak-ac670.firebasestorage.app',) );
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: 'AIzaSyCq9Hv8p1W9w39gnuRyJZ2qPDIWdvtOQAM',
+      appId: '1:825527275199:android:f9e2768a3629024e6b000a',
+      messagingSenderId: '825527275199',
+      projectId: 'udyojak-ac670',
+      storageBucket: 'udyojak-ac670.firebasestorage.app',
+    ),
+  );
   runApp(const MyApp());
 }
 
@@ -32,8 +32,6 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Customer App',
-
       // Theme section: Define the light and dark theme for the app
       theme: ThemeData(
         brightness: Brightness.light,
@@ -67,16 +65,12 @@ class _MyAppState extends State<MyApp> {
             side: const BorderSide(color: Colors.red), // Red border
           ),
         ),
-
       ),
-
-
       // Dark theme section: Define dark theme styling
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         useMaterial3: true,
         scaffoldBackgroundColor: const Color(0xFF3C7838),
-
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF5AB850),
           elevation: 0,
@@ -104,10 +98,9 @@ class _MyAppState extends State<MyApp> {
             side: const BorderSide(color: Colors.red), // Red border
           ),
         ),
-
       ),
       themeMode: _themeMode, // Dynamically apply theme
-      home: demo() // Homepage with theme toggle
+      home: HomePage(onThemeChanged: _toggleTheme), // Pass the theme change function
     );
   }
 
@@ -146,7 +139,6 @@ class HomePage extends StatelessWidget {
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-
         // Background gradient: Gradient color background for the main page
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -175,7 +167,6 @@ class HomePage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
-
               // Sign In and Sign Up Buttons: Navigation to sign in and sign up pages
               ElevatedButton(
                 onPressed: () {

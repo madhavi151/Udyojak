@@ -1,77 +1,120 @@
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class demo extends StatefulWidget {
-  const demo({super.key});
-
-  @override
-  State<demo> createState() => _demoState();
+void main() {
+  runApp(const MyApp());
 }
 
-class _demoState extends State<demo> {
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-TextEditingController name = TextEditingController();
-TextEditingController Contactno = TextEditingController();
-TextEditingController address = TextEditingController();
-TextEditingController description = TextEditingController();
-TextEditingController image = TextEditingController();
-TextEditingController email  = TextEditingController();
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Firebase Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const Demo(),
+    );
+  }
+}
 
+class Demo extends StatefulWidget {
+  const Demo({super.key});
+
+  @override
+  State<Demo> createState() => _DemoState();
+}
+
+class _DemoState extends State<Demo> {
+  TextEditingController name = TextEditingController();
+  TextEditingController contactNo = TextEditingController();
+  TextEditingController address = TextEditingController();
+  TextEditingController description = TextEditingController();
+  TextEditingController image = TextEditingController();
+  TextEditingController email = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-    body: Column(
-      children: [
-        TextField(
-          controller: name,
-          decoration: InputDecoration(
-            labelText: 'Name'
+      appBar: AppBar(
+        title: const Text('Add Product'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextField(
+                controller: name,
+                decoration: const InputDecoration(
+                  labelText: 'Name',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: image,
+                decoration: const InputDecoration(
+                  labelText: 'Image',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: email,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: description,
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: contactNo,
+                decoration: const InputDecoration(
+                  labelText: 'Contact No',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: address,
+                decoration: const InputDecoration(
+                  labelText: 'Address',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  FirebaseFirestore.instance.collection("Products Of Business").doc().set({
+                    "name": name.text,
+                    "address": address.text,
+                    "email": email.text,
+                    "description": description.text,
+                    "ContactNo": contactNo.text,
+                    "image": image.text,
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Product added successfully!')),
+                  );
+                },
+                child: const Text("Submit"),
+              ),
+            ],
           ),
         ),
-        TextField(
-          controller: image,
-          decoration: InputDecoration(
-              labelText: 'image'
-          ),
-        ),
-        TextField(
-          controller: email,
-          decoration: InputDecoration(
-              labelText: 'email'
-          ),
-        ),
-        TextField(
-          controller: description,
-          decoration: InputDecoration(
-              labelText: 'description'
-          ),
-        ),
-        TextField(
-          controller: Contactno,
-          decoration: InputDecoration(
-              labelText: 'Contact no'
-          ),
-        ),
-        TextField(
-          controller: address,
-          decoration: InputDecoration(
-              labelText: 'address'
-          ),
-        ),
-        ElevatedButton(onPressed: (){
-          FirebaseFirestore.instance.collection("Products").doc().set({
-            "name":name.text,
-            "address":address.text,
-            "email":email.text,
-            "description":description.text,
-            "Contactno":Contactno.text,
-            "image":image.text
-          });
-        
-        }, child: Text("Submit"))
-      ],
-    ),
+      ),
     );
   }
 }
