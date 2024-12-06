@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'HomePage.dart';  // Import your existing HomePage
+import 'signup_page.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -16,6 +18,7 @@ class _SignInPageState extends State<SignInPage> {
   bool isLoading = false;
   String? errorMessage;
 
+  // Firebase sign-in function
   void signIn() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -27,14 +30,17 @@ class _SignInPageState extends State<SignInPage> {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
-    // Simulating sign-in (replace with actual authentication logic)
-    final isSuccess = await Future.delayed(const Duration(seconds: 2), () => true);
+    try {
+      // Sign in using Firebase Authentication
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    setState(() {
-      isLoading = false;
-    });
+      setState(() {
+        isLoading = false;
+      });
 
-    if (isSuccess) {
       // After successful sign-in, navigate to your existing HomePage
       Navigator.pushReplacement(
         context,
@@ -42,9 +48,10 @@ class _SignInPageState extends State<SignInPage> {
           builder: (context) => MyApp(), // Navigate to MyApp (HomePage will be part of it)
         ),
       );
-    } else {
+    } on FirebaseAuthException catch (e) {
       setState(() {
-        errorMessage = "Sign-In failed. Please try again.";
+        isLoading = false;
+        errorMessage = e.message; // Show the error message from Firebase
       });
     }
   }
@@ -82,6 +89,7 @@ class _SignInPageState extends State<SignInPage> {
               ),
               const SizedBox(height: 30),
 
+              // Email TextField
               TextFormField(
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -107,6 +115,7 @@ class _SignInPageState extends State<SignInPage> {
               ),
               const SizedBox(height: 20),
 
+              // Password TextField
               TextFormField(
                 controller: passwordController,
                 obscureText: true,
@@ -131,6 +140,7 @@ class _SignInPageState extends State<SignInPage> {
               ),
               const SizedBox(height: 20),
 
+              // Display error message if there is one
               if (errorMessage != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
@@ -140,6 +150,7 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ),
 
+              // Loading state and sign-in button
               isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : SizedBox(
@@ -160,6 +171,8 @@ class _SignInPageState extends State<SignInPage> {
                 ),
               ),
               const SizedBox(height: 20),
+
+              // Sign-up link
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -169,7 +182,13 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      // Add your sign-up navigation here
+                      // Navigate to SignUpPage
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SignUpPage(),
+                        ),
+                      );
                     },
                     child: const Text(
                       "Sign Up",

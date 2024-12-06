@@ -1,54 +1,88 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
-  final String baseUrl =
-      'https://your-backend-api-url.com'; // Replace with your backend URL
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  /// Method for signing in a user
-  Future<String?> signIn(String email, String password) async {
+  // Firebase sign-in method
+  Future<String?> signInWithFirebase(String email, String password) async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/api/signin'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
+      // Sign in with Firebase Authentication
+      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
       );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data['token']; // Return the token on successful login
+      if (userCredential.user != null) {
+        // If Firebase sign-in is successful, return the user UID or success message
+        return 'Sign-in successful!';
       } else {
-        return null; // Login failed
+        return 'Failed to sign in with Firebase.';
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        return 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        return 'Wrong password provided.';
+      } else {
+        return 'Failed to sign in: ${e.message}';
       }
     } catch (e) {
-      print('Sign-In Error: $e');
-      return null;
+      return 'An unexpected error occurred: ${e.toString()}';
     }
   }
 
-  /// Method for signing up a user
-  Future<bool> signUp(String email, String password) async {
+  // Sign-up method using Firebase Authentication
+  Future<String> signUpWithFirebase(String email, String password) async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/api/signup'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
+      final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
       );
-
-      if (response.statusCode == 201) {
-        return true; // Sign-up successful
+      return 'Sign-up successful!';  // Return success message
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        return 'Email is already in use.';
+      } else if (e.code == 'weak-password') {
+        return 'The password is too weak.';
       } else {
-        return false; // Sign-up failed
+        return 'Failed to sign up: ${e.message}';
       }
     } catch (e) {
-      print('Sign-Up Error: $e');
-      return false;
+      return 'An unexpected error occurred: ${e.toString()}';
+    }
+  }
+
+  // Method to sign out the user
+  Future<String> signOut() async {
+    try {
+      await _auth.signOut();
+      return 'Sign-out successful!';
+    } catch (e) {
+      return 'An error occurred while signing out: ${e.toString()}';
+    }
+  }
+
+  // Method to reset password
+  Future<String> resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      return 'Password reset email sent.';
+    } catch (e) {
+      return 'An error occurred: ${e.toString()}';
+    }
+  }
+
+  // Method to check if a user is logged in
+  Future<String?> getCurrentUser() async {
+    try {
+      final User? user = _auth.currentUser;
+      if (user != null) {
+        return 'Logged in as: ${user.email}';
+      } else {
+        return 'No user is logged in.';
+      }
+    } catch (e) {
+      return 'An error occurred: ${e.toString()}';
     }
   }
 }

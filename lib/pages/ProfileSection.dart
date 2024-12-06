@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'AppearanceSettingsPage.dart';
 import 'DetailsPage.dart';
+import 'signin_page.dart'; // Import SignInPage for navigation
+
 class ProfileSection extends StatelessWidget {
   final bool isDarkMode;
   final Function(bool) onDarkModeToggle;
@@ -37,8 +39,7 @@ class ProfileSection extends StatelessWidget {
               context,
               icon: Icons.person,
               title: 'Personal Details',
-              subtitle:
-              'Username: Madhavi\nEmail: @example.com\nContact: 1234567890\nAddress: City, Country',
+
               onTap: () {
                 Navigator.push(
                   context,
@@ -56,7 +57,7 @@ class ProfileSection extends StatelessWidget {
               context,
               icon: Icons.history,
               title: 'Order History ',
-              subtitle: 'Orders History',
+             /// subtitle: 'Orders History',
               onTap: () {
                 Navigator.push(
                   context,
@@ -103,6 +104,25 @@ class ProfileSection extends StatelessWidget {
                       title: "About the App",
                       details: "This is a sample app profile section.",
                     ),
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+            // Log Out Section
+            _buildListTile(
+              context,
+              icon: Icons.logout,
+              title: 'Log Out',
+              subtitle: 'Tap to log out from the app.',
+              onTap: () {
+                // Navigate to SignInPage or SignUpPage
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const SignInPage(), // Redirect to SignInPage
                   ),
                 );
               },

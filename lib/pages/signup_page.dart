@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:Udyojak/services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
+import 'package:Udyojak/services/auth_service.dart'; // Import AuthService
 
+// Assuming you have a home page after successful login
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
@@ -9,23 +11,17 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  // Text controllers to manage the input fields for email, password, and confirm password.
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-  TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
-  // Instance of AuthService to handle sign-up functionality
   final AuthService authService = AuthService();
-
-  // FormKey to manage form validation state
   final _formKey = GlobalKey<FormState>();
 
-  // State variables to manage loading and error messages
   bool isLoading = false;
   String? errorMessage;
 
-  // Method to handle sign-up logic
+  // Sign-up logic using Firebase
   void signUp() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -38,26 +34,32 @@ class _SignUpPageState extends State<SignUpPage> {
     final password = passwordController.text.trim();
 
     try {
-      final isSuccess = await authService.signUp(email, password);
+      final result = await authService.signUpWithFirebase(email, password);  // Capture the returned message
+      print("Sign-Up Result: $result");  // Debugging output
 
       setState(() {
         isLoading = false;
       });
 
-      if (isSuccess) {
+      if (result == 'Sign-up successful!') {  // Check for success message
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const SignUpSuccessPage()),
         );
       } else {
         setState(() {
-          errorMessage = "Sign-Up failed. Please try again.";
+          errorMessage = result;  // Use the returned error message
         });
       }
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        isLoading = false;
+        errorMessage = e.message;  // Show Firebase error message
+      });
     } catch (e) {
       setState(() {
         isLoading = false;
-        errorMessage = e.toString(); // Display error message
+        errorMessage = "An unexpected error occurred: ${e.toString()}";
       });
     }
   }
@@ -65,163 +67,141 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Set background color to white
-      body: SingleChildScrollView( // Make the page scrollable
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
         child: Form(
-          key: _formKey,  // Use the form key for validation
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // App Logo
               Center(
                 child: Image.asset(
-                  'assets/image/WelcomeLogo.jpg', // Replace with your logo path
-                  height: 100,  // Set height for the logo
+                  'assets/image/WelcomeLogo.jpg',
+                  height: 100,
                 ),
               ),
-              const SizedBox(height: 20), // Add space below the logo
-
-              // Page Title
+              const SizedBox(height: 20),
               const Text(
                 "Create an Account",
                 style: TextStyle(
-                  fontSize: 28, // Set font size for the title
-                  fontWeight: FontWeight.bold, // Set bold font weight
-                  color: Colors.black, // Set text color to black
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
               ),
-              const SizedBox(height: 10), // Add space below the title
-
-              // Subtitle for the page
+              const SizedBox(height: 10),
               const Text(
                 "Sign up to explore our services and connect with opportunities.",
-                style: TextStyle(fontSize: 16, color: Colors.grey), // Set font size and color
+                style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
-              const SizedBox(height: 30), // Add space below the subtitle
-
-              // Email Field
+              const SizedBox(height: 30),
               TextFormField(
-                controller: emailController, // Bind the email controller
-                keyboardType: TextInputType.emailAddress, // Set keyboard to email type
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  labelText: "Email",  // Label for the email input field
+                  labelText: "Email",
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10), // Rounded corners
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  prefixIcon: const Icon(Icons.email), // Icon for the email field
+                  prefixIcon: const Icon(Icons.email),
                 ),
                 validator: (value) {
-                  // Validate the email input
                   if (value == null || value.isEmpty) {
-                    return "Please enter your email."; // Show error if empty
+                    return "Please enter your email.";
                   }
-                  // Regex for validating email format
                   if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
                       .hasMatch(value)) {
-                    return "Please enter a valid email."; // Show error for invalid format
+                    return "Please enter a valid email.";
                   }
-                  return null; // Return null if email is valid
+                  return null;
                 },
               ),
-              const SizedBox(height: 20), // Add space below email field
-
-              // Password Field
+              const SizedBox(height: 20),
               TextFormField(
-                controller: passwordController, // Bind the password controller
-                obscureText: true, // Hide password input
+                controller: passwordController,
+                obscureText: true,
                 decoration: InputDecoration(
-                  labelText: "Password",  // Label for the password input field
+                  labelText: "Password",
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10), // Rounded corners
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  prefixIcon: const Icon(Icons.lock), // Icon for the password field
+                  prefixIcon: const Icon(Icons.lock),
                 ),
                 validator: (value) {
-                  // Validate password input
                   if (value == null || value.isEmpty) {
-                    return "Please enter your password."; // Show error if empty
+                    return "Please enter your password.";
                   }
                   if (value.length < 6) {
-                    return "Password must be at least 6 characters."; // Validate length
+                    return "Password must be at least 6 characters.";
                   }
-                  return null; // Return null if password is valid
+                  return null;
                 },
               ),
-              const SizedBox(height: 20), // Add space below password field
-
-              // Confirm Password Field
+              const SizedBox(height: 20),
               TextFormField(
-                controller: confirmPasswordController, // Bind the confirm password controller
-                obscureText: true, // Hide confirm password input
+                controller: confirmPasswordController,
+                obscureText: true,
                 decoration: InputDecoration(
-                  labelText: "Confirm Password",  // Label for confirm password field
+                  labelText: "Confirm Password",
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10), // Rounded corners
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  prefixIcon: const Icon(Icons.lock_outline), // Icon for confirm password
+                  prefixIcon: const Icon(Icons.lock_outline),
                 ),
                 validator: (value) {
-                  // Validate confirm password input
                   if (value == null || value.isEmpty) {
-                    return "Please confirm your password."; // Show error if empty
+                    return "Please confirm your password.";
                   }
                   if (value != passwordController.text.trim()) {
-                    return "Passwords do not match."; // Show error if passwords don't match
+                    return "Passwords do not match.";
                   }
-                  return null; // Return null if passwords match
+                  return null;
                 },
               ),
-              const SizedBox(height: 20), // Add space below confirm password field
-
-              // Display error message if any
+              const SizedBox(height: 20),
               if (errorMessage != null)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10), // Padding for error message
+                  padding: const EdgeInsets.only(bottom: 10),
                   child: Text(
-                    errorMessage!, // Display error message
-                    style: const TextStyle(color: Colors.red), // Red color for error
+                    errorMessage!,
+                    style: const TextStyle(color: Colors.red),
                   ),
                 ),
-
-              // Sign-Up Button
               isLoading
-                  ? const Center(child: CircularProgressIndicator()) // Show loading indicator if isLoading is true
+                  ? const Center(child: CircularProgressIndicator())
                   : SizedBox(
-                width: double.infinity, // Full width for the button
+                width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent, // Button color
-                    padding: const EdgeInsets.symmetric(vertical: 15), // Button padding
+                    backgroundColor: Colors.redAccent,
+                    padding: const EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10), // Rounded corners
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  onPressed: signUp, // Call signUp method when pressed
+                  onPressed: signUp,
                   child: const Text(
-                    "Sign Up",  // Text for the button
-                    style: TextStyle(fontSize: 18, color: Colors.white), // Text style
+                    "Sign Up",
+                    style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
               ),
-
-              const SizedBox(height: 20), // Add space below the sign-up button
-
-              // "Already have an account?" and "Log In" text with the same color
+              const SizedBox(height: 20),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center, // Center the row content
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
                     "Already have an account?",
-                    style: TextStyle(color: Colors.black), // Text color for "Already have an account?"
+                    style: TextStyle(color: Colors.black),
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.pop(context); // Navigate back to login page
+                      Navigator.pop(context);
                     },
                     child: const Text(
-                      "Log In",  // Text for the login link
-                      style: TextStyle(color: Colors.redAccent), // Text color for login link
+                      "Log In",
+                      style: TextStyle(color: Colors.redAccent),
                     ),
                   ),
                 ],
@@ -231,14 +211,6 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
-  }
-}
-
-class AuthService {
-  // Simulating sign-up functionality (replace with actual backend API call)
-  Future<bool> signUp(String email, String password) async {
-    await Future.delayed(const Duration(seconds: 2)); // Simulate network request delay
-    return true; // Simulate success; return `false` to simulate failure
   }
 }
 
@@ -252,18 +224,18 @@ class SignUpSuccessPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.check_circle, size: 100, color: Colors.green), // Success icon
-            const SizedBox(height: 20), // Space below the icon
+            const Icon(Icons.check_circle, size: 100, color: Colors.green),
+            const SizedBox(height: 20),
             const Text(
-              "Sign-Up Successful!", // Success message text
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold), // Style for success message
+              "Sign-Up Successful!",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context); // Navigate back to login page
+                Navigator.pop(context);
               },
-              child: const Text("Go to Log In"), // Button text
+              child: const Text("Go to Log In"),
             ),
           ],
         ),
