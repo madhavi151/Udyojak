@@ -4,7 +4,8 @@ class EditPersonalDetailsPage extends StatefulWidget {
   final String username;
   final String email;
   final String mobileNumber;
-  final Function(String, String, String) onSave;
+  final String address;
+  final Function(String, String, String,String) onSave;
 
   const EditPersonalDetailsPage({
     super.key,
@@ -12,6 +13,8 @@ class EditPersonalDetailsPage extends StatefulWidget {
     required this.email,
     required this.mobileNumber,
     required this.onSave,
+    required this.address,
+
   });
 
   @override
@@ -23,12 +26,15 @@ class _EditPersonalDetailsPageState extends State<EditPersonalDetailsPage> {
   late TextEditingController emailController;
   late TextEditingController mobileNumberController;
 
+  late TextEditingController addressController;
+
   @override
   void initState() {
     super.initState();
     usernameController = TextEditingController(text: widget.username);
     emailController = TextEditingController(text: widget.email);
     mobileNumberController = TextEditingController(text: widget.mobileNumber);
+    addressController = TextEditingController(text: widget.address);
   }
 
   @override
@@ -54,6 +60,10 @@ class _EditPersonalDetailsPageState extends State<EditPersonalDetailsPage> {
               controller: mobileNumberController,
               decoration: const InputDecoration(labelText: 'Mobile Number'),
             ),
+            TextField(
+              controller: addressController,
+              decoration: const InputDecoration(labelText: 'Adresss'),
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
@@ -61,6 +71,7 @@ class _EditPersonalDetailsPageState extends State<EditPersonalDetailsPage> {
                   usernameController.text,
                   emailController.text,
                   mobileNumberController.text,
+                  addressController.text,
                 );
                 Navigator.pop(context); // Go back after saving
               },

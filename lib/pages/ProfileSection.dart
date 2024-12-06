@@ -24,34 +24,78 @@ class _ProfileSectionState extends State<ProfileSection> {
   late String username;
   late String email;
   late String mobileNumber;
+  late String address; // Add address to the state
 
   @override
   void initState() {
     super.initState();
+    _loadUserData();
+  }
+
+  // Method to load user data from Firebase
+  Future<void> _loadUserData() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       email = user.email ?? 'No email';
       username = user.displayName ?? 'No username'; // Fallback if displayName is not set
-      mobileNumber = 'Not Available'; // Firebase Auth does not store the phone number directly
+      mobileNumber = await _fetchMobileNumber(user.uid) ?? 'Not Available';
+      address = await _fetchAddress(user.uid) ?? 'Not Available'; // Fetch address
     } else {
       email = 'No email';
       username = 'No username';
       mobileNumber = 'Not Available';
+      address = 'Not Available'; // Fallback address
+    }
+
+    setState(() {});
+  }
+
+  // Fetch mobile number from Firestore (if stored)
+  Future<String?> _fetchMobileNumber(String userId) async {
+    try {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      return userDoc.exists ? userDoc['mobileNumber'] : null;
+    } catch (e) {
+      print('Error fetching mobile number: $e');
+      return null;
     }
   }
 
-  void updateDetails(String newUsername, String newEmail, String newMobileNumber) {
-    setState(() {
-      username = newUsername;
-      email = newEmail;
-      mobileNumber = newMobileNumber;
-    });
+  // Fetch address from Firestore (if stored)
+  Future<String?> _fetchAddress(String userId) async {
+    try {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      return userDoc.exists ? userDoc['address'] : null;
+    } catch (e) {
+      print('Error fetching address: $e');
+      return null;
+    }
+  }
 
-    // You can also update Firebase here
+  // Method to update user details in Firebase
+  Future<void> updateDetails(String newUsername, String newEmail, String newMobileNumber, String newAddress) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      user.updateDisplayName(newUsername);  // Update username
-      // Update the mobile number in Firebase if you're using Firebase Database or Firestore.
+      try {
+        // Update username
+        await user.updateDisplayName(newUsername);
+
+        // Update mobile number and address in Firestore
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'mobileNumber': newMobileNumber,
+          'address': newAddress, // Update address
+        }, SetOptions(merge: true));
+
+        // Update local state
+        setState(() {
+          username = newUsername;
+          email = newEmail;
+          mobileNumber = newMobileNumber;
+          address = newAddress; // Update address
+        });
+      } catch (e) {
+        print('Error updating details: $e');
+      }
     }
   }
 
@@ -81,7 +125,7 @@ class _ProfileSectionState extends State<ProfileSection> {
               context,
               icon: Icons.person,
               title: 'Personal Details',
-              subtitle: 'Username: $username\nEmail: $email\nMobile: $mobileNumber',
+              subtitle: 'Username: $username\nEmail: $email\nMobile: $mobileNumber\nAddress: $address',
               onTap: () {
                 Navigator.push(
                   context,
@@ -90,6 +134,7 @@ class _ProfileSectionState extends State<ProfileSection> {
                       username: username,
                       email: email,
                       mobileNumber: mobileNumber,
+                      address: address, // Pass address here
                       onSave: updateDetails,
                     ),
                   ),
@@ -104,7 +149,7 @@ class _ProfileSectionState extends State<ProfileSection> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const OrderHistoryPage(), // Now no need to pass orderHistory
+                    builder: (_) => OrderHistoryPage(),
                   ),
                 );
               },

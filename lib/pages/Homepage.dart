@@ -4,6 +4,7 @@ import 'HomeSection.dart';
 import 'ProfileSection.dart';
 import 'CartSection.dart';
 import 'SearchSection.dart';
+import 'EditPersonalDetailsPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -130,7 +131,9 @@ class _HomePageState extends State<HomePage> {
           removeFromCart: widget.removeFromCart,
           clearCart: widget.clearCart, // Passing clearCart to CartSection
           totalAmount: widget.totalAmount, // Pass totalAmount to CartSection
+         // Pass the fetched mobile number
         );
+
       case 3:
         final user = FirebaseAuth.instance.currentUser;
         final username = user?.displayName ?? "User";
