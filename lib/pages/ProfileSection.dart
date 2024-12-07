@@ -23,8 +23,8 @@ class ProfileSection extends StatefulWidget {
 class _ProfileSectionState extends State<ProfileSection> {
   late String username;
   late String email;
-  late String mobileNumber;
-  late String address; // Add address to the state
+   String ? mobileNumber;
+   String ? address; // Add address to the state
 
   @override
   void initState() {
@@ -102,13 +102,13 @@ class _ProfileSectionState extends State<ProfileSection> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Profile",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.red,
-      ),
+      // appBar: AppBar(
+      //   title: const Text(
+      //     "Profile",
+      //     style: TextStyle(fontWeight: FontWeight.bold),
+      //   ),
+      //   backgroundColor: Colors.red,
+      // ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ListView(
@@ -133,8 +133,8 @@ class _ProfileSectionState extends State<ProfileSection> {
                     builder: (_) => EditPersonalDetailsPage(
                       username: username,
                       email: email,
-                      mobileNumber: mobileNumber,
-                      address: address, // Pass address here
+                      mobileNumber: mobileNumber??"",
+                      address: address??"", // Pass address here
                       onSave: updateDetails,
                     ),
                   ),
@@ -172,7 +172,7 @@ class _ProfileSectionState extends State<ProfileSection> {
               },
             ),
 
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
 
             // Log Out Section
             _buildListTile(
@@ -237,26 +237,29 @@ class _ProfileSectionState extends State<ProfileSection> {
         String? subtitle,
         VoidCallback? onTap,
       }) {
-    return ListTile(
-      onTap: onTap,
-      leading: CircleAvatar(
-        backgroundColor: Colors.red[50],
-        child: Icon(
-          icon,
-          color: Colors.green,
+    return Card(
+      elevation: 5,
+      child: ListTile(
+        onTap: onTap,
+        leading: CircleAvatar(
+          backgroundColor: Colors.red[50],
+          child: Icon(
+            icon,
+            color: Colors.green,
+          ),
         ),
+        title: Text(
+          title,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        subtitle: subtitle != null
+            ? Text(
+          subtitle,
+          style: const TextStyle(fontSize: 14, color: Colors.grey),
+        )
+            : null,
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
       ),
-      title: Text(
-        title,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
-      subtitle: subtitle != null
-          ? Text(
-        subtitle,
-        style: const TextStyle(fontSize: 14, color: Colors.grey),
-      )
-          : null,
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
     );
   }
 }

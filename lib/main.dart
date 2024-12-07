@@ -1,3 +1,4 @@
+import 'package:Udyojak/pages/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:Udyojak/pages/signin_page.dart';
@@ -50,7 +51,8 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
       themeMode: _themeMode, // Dynamically apply theme
-      home: HomePage(onThemeChanged: _toggleTheme),
+      // home: HomePage(onThemeChanged: _toggleTheme),
+      home: SplashScreen(),
     );
   }
 }

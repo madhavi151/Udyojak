@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:Udyojak/main.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -27,6 +30,31 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  ThemeMode _themeMode = ThemeMode.light;
+
+  // Function to toggle theme
+  void _toggleTheme(bool isDark) {
+    setState(() {
+      _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
+
+  void initState() {
+    super.initState();
+    _navigateToHome();
+  }
+
+  // Function to navigate after 3 seconds
+  _navigateToHome() {
+    Timer(Duration(seconds: 5), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage(onThemeChanged: _toggleTheme),), // Navigate to HomeScreen
+      );
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +109,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                   const SizedBox(height: 20), // Add space between text and arrow
                   // Professional looking Arrow with animation
-                  GestureDetector(
+         /*         GestureDetector(
                     onTap: () {
                       // Navigate to Sign In / Sign Up page
                       Navigator.push(
@@ -109,53 +137,11 @@ class _SplashScreenState extends State<SplashScreen> {
                       ),
                     ),
                   ),
-                ],
+         */       ],
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// Sign In Page
-class SignInPage extends StatelessWidget {
-  const SignInPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Sign In')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text('Sign In Page', style: TextStyle(fontSize: 24)),
-            // Add Sign In form here
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Sign Up Page
-class SignUpPage extends StatelessWidget {
-  const SignUpPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Sign Up')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text('Sign Up Page', style: TextStyle(fontSize: 24)),
-            // Add Sign Up form here
-          ],
-        ),
       ),
     );
   }

@@ -12,11 +12,17 @@ class Product {
   Product({required this.name, required this.image, required this.price});
 }
 
-class HomeSection extends StatelessWidget {
+class HomeSection extends StatefulWidget {
   final Function(Product) addToCart;
+  final List<Product> cart;
 
-  HomeSection({super.key, required this.addToCart});
+  HomeSection({super.key, required this.addToCart,required this.cart});
 
+  @override
+  State<HomeSection> createState() => _HomeSectionState();
+}
+
+class _HomeSectionState extends State<HomeSection> {
   ///Categories Section
 
 
@@ -315,133 +321,22 @@ class HomeSection extends StatelessWidget {
     }
   ];
 
+  bool isAdded=false;
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return PopScope(
+      canPop: false,
+      child: SingleChildScrollView(
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
 
-          ///Categories
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Featured Products',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.black87,
-              ),
-            ),
-          ),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () {
-                  addToCart(products[index]);
-                },
-                child: Card(
-                  elevation: 5, // Shadow for the card
-                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Product Image
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.asset(
-                          products[index].image,
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      const SizedBox(width: 16), // Spacing between image and details
-                      // Product Details
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              products[index].name,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black87,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              '₹${products[index].price}',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.green[300] // Lighter green for dark theme
-                                    : Colors.green,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Add to Cart Button
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green, // Button color
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          onPressed: () {
-                            // Add to cart logic
-                            addToCart(products[index]);
-
-                            // Show a SnackBar with the notification
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  '${products[index].name} added to cart!',
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                                backgroundColor: Colors.lightGreen,
-                                duration: const Duration(seconds: 2),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            'Add to Cart',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-
-          ///business
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Recommended Businesses',
+              ///Categories
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Featured Products',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -450,205 +345,326 @@ class HomeSection extends StatelessWidget {
                         : Colors.black87,
                   ),
                 ),
-                const SizedBox(height: 12),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: recommendedBusinesses.length,
-                  itemBuilder: (context, index) {
-                    final business = recommendedBusinesses[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BusinessDetailPage(business: business),
-                          ),
-                        );
-                      },
-                      child: Card(
-                        elevation: 5.0,
-                        margin: const EdgeInsets.symmetric(vertical: 8.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                          leading: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: products.length,
+                itemBuilder: (context, index) {
+                  final product = products[index];
+                  final isAdded = widget.cart.contains(product);
+
+                  return GestureDetector(
+                    onTap: () {
+
+
+                      widget.addToCart(products[index]);
+                    },
+                    child: Card(
+                      elevation: 5, // Shadow for the card
+                      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Product Image
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
                             child: Image.asset(
-                              business['image'],
-                              width: 60,
-                              height: 60,
+                              products[index].image,
+                              width: 80,
+                              height: 80,
                               fit: BoxFit.cover,
                             ),
                           ),
-                          title: Text(
-                            business['name'],
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).brightness == Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black87,
+                          const SizedBox(width: 16), // Spacing between image and details
+                          // Product Details
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  products[index].name,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).brightness == Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black87,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  '₹${products[index].price}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Theme.of(context).brightness == Brightness.dark
+                                        ? Colors.green[300] // Lighter green for dark theme
+                                        : Colors.green,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          subtitle: Text(
-                            business['email'],
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Theme.of(context).brightness == Brightness.dark
-                                  ? Colors.grey[400]
-                                  : Colors.grey[600],
+                          // Add to Cart Button
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green, // Button color
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              onPressed: () {
+
+
+                                widget.addToCart(products[index]);
+
+                                // Show a SnackBar with the notification
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      '${products[index].name} added to cart!',
+                                      style: const TextStyle(color: Colors.white),
+                                    ),
+                                    backgroundColor: Colors.lightGreen,
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                              },
+                              child:  Text(
+                                isAdded?"Added":        'Add to Cart',
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
                           ),
-                          trailing: const Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.blueAccent,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                // View All Button
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextButton(
-                    onPressed: () {
-                      // Navigate to AllBusinessesPage with the complete list of businesses
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AllBusinessesPage(businesses: recommendedBusinesses),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'View All',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.blue,
+                        ],
                       ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-
-
-          ///Services
-    Padding(
-    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-    child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-    Text(
-    'Recommended Services',
-    style: TextStyle(
-    fontSize: 22,
-    fontWeight: FontWeight.bold,
-    color: Theme.of(context).brightness == Brightness.dark
-    ? Colors.white
-        : Colors.black87, // Text color adjusts to the theme
-    ),
-    ),
-    SizedBox(height: 12),
-    // Adds space between the title and the list
-    ListView.builder(
-    shrinkWrap: true,
-    physics: const NeverScrollableScrollPhysics(),
-    itemCount: recommendedServices.length > 3
-    ? 3
-        : recommendedServices.length, // Show only 3 services
-    itemBuilder: (context, index) {
-    final service = recommendedServices[index];
-    return GestureDetector(
-    onTap: () {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (context) => ServiceDetailPage(service: service),
-    ),
-    );
-    },
-    child: Card(
-    elevation: 5.0,
-    // Adds a subtle shadow effect for a modern look
-    margin: const EdgeInsets.symmetric(vertical: 8.0),
-    shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(12.0), // Rounded corners for card
-    ),
-    child: ListTile(
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-    leading: ClipRRect(
-    borderRadius: BorderRadius.circular(8.0),
-    child: Image.asset(
-    service['image'], // Displaying service image
-    width: 60,
-    height: 60,
-    fit: BoxFit.cover,
-    ),
-    ),
-    title: Text(
-    service['name'], // Displaying service name
-    style: TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
-    color: Theme.of(context).brightness == Brightness.dark
-    ? Colors.white
-        : Colors.black87, // Text color based on theme
-    ),
-    ),
-    subtitle: Text(
-    service['description'],
-    // Displaying service description
-    style: TextStyle(
-    fontSize: 14,
-    color: Theme.of(context).brightness == Brightness.dark
-    ? Colors.white70
-        : Colors.grey[600], // Adjust subtitle color for readability
-    ),
-    ),
-    trailing: const Icon(
-    Icons.arrow_forward_ios,
-    color: Colors.blueAccent,
-    size: 20,
-    ),
-    ),
-    ),
-    );
-    },
-    ),
-    // Add View All button
-      Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: TextButton(
-          onPressed: () {
-            // Navigate to AllServicesPage with the full list of services
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AllServicesPage(services: recommendedServices),
+                  );
+                },
               ),
-            );
-          },
-          child: const Text(
-            'View All',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.green,
-    ),
-    ),
-    ),
-    ),
-    ],
-    ),
-    )
-    ]
+
+              ///business
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Recommended Businesses',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: recommendedBusinesses.length,
+                      itemBuilder: (context, index) {
+                        final business = recommendedBusinesses[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BusinessDetailPage(business: business),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            elevation: 5.0,
+                            margin: const EdgeInsets.symmetric(vertical: 8.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                              leading: ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: Image.asset(
+                                  business['image'],
+                                  width: 60,
+                                  height: 60,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              title: Text(
+                                business['name'],
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black87,
+                                ),
+                              ),
+                              subtitle: Text(
+                                business['email'],
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? Colors.grey[400]
+                                      : Colors.grey[600],
+                                ),
+                              ),
+                              trailing: const Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.blueAccent,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    // View All Button
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TextButton(
+                        onPressed: () {
+                          // Navigate to AllBusinessesPage with the complete list of businesses
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AllBusinessesPage(businesses: recommendedBusinesses),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'View All',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+
+
+              ///Services
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Recommended Services',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black87, // Text color adjusts to the theme
+                      ),
+                    ),
+                    SizedBox(height: 12),
+                    // Adds space between the title and the list
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: recommendedServices.length > 3
+                          ? 3
+                          : recommendedServices.length, // Show only 3 services
+                      itemBuilder: (context, index) {
+                        final service = recommendedServices[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ServiceDetailPage(service: service),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            elevation: 5.0,
+                            // Adds a subtle shadow effect for a modern look
+                            margin: const EdgeInsets.symmetric(vertical: 8.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0), // Rounded corners for card
+                            ),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                              leading: ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: Image.asset(
+                                  service['image'], // Displaying service image
+                                  width: 60,
+                                  height: 60,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              title: Text(
+                                service['name'], // Displaying service name
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black87, // Text color based on theme
+                                ),
+                              ),
+                              subtitle: Text(
+                                service['description'],
+                                // Displaying service description
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? Colors.white70
+                                      : Colors.grey[600], // Adjust subtitle color for readability
+                                ),
+                              ),
+                              trailing: const Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.blueAccent,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    // Add View All button
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TextButton(
+                        onPressed: () {
+                          // Navigate to AllServicesPage with the full list of services
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AllServicesPage(services: recommendedServices),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'View All',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.green,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ]
+        ),
       ),
     );
   }

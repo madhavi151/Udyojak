@@ -50,7 +50,7 @@ class _CartSectionState extends State<CartSection> {
         if (userDoc.exists) {
           setState(() {
             email = user.email ?? '';
-            mobileNumber = userDoc['phoneNumber'] ?? '';
+            mobileNumber = userDoc['mobileNumber'] ?? '';
             address = userDoc['address'] ?? '';
           });
         }

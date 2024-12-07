@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage> {
   Widget _getPage() {
     switch (_selectedIndex) {
       case 0:
-        return HomeSection(addToCart: widget.addToCart);
+        return HomeSection(addToCart: widget.addToCart , cart:widget.cart,);
       case 1:
         return SearchSection(
           addToCart: widget.addToCart,
@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
           onDarkModeToggle: widget.onDarkModeToggle,
         );
       default:
-        return HomeSection(addToCart: widget.addToCart);
+        return HomeSection(addToCart: widget.addToCart ,cart: widget.cart,);
     }
   }
 
