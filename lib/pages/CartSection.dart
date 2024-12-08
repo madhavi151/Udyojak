@@ -114,8 +114,6 @@ class _CartSectionState extends State<CartSection> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cart'),
-        backgroundColor: Colors.green,
         actions: [
           IconButton(
             icon: Icon(Icons.history),

@@ -3,6 +3,7 @@ import 'ServiceDetailPage.dart';
 import 'AllServicePage.dart';
 import 'BusinessDetailPage.dart';
 import 'AllBusinessesPage.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Product {
   final String name;
@@ -72,7 +73,7 @@ class _HomeSectionState extends State<HomeSection> {
       "products": [
         Product(
             name: "Chocolate Dutch truffle",
-            image: "Arted",
+            image: "assets/image/truffle.jpg",
             price: 1350),
         Product(
             name: "Black forest",
@@ -128,7 +129,7 @@ class _HomeSectionState extends State<HomeSection> {
     {
       "name": "Shiv Shakti Collections",
       "image": "assets/image/wall_art.jpg",
-      "email": "anamikachaurasiya1722@gmail.com",
+      "email": "anamikachaurasiya1718@gmail.com",
       "description":
       "Girls fashionable products like scrunchies, light watch, beautiful bracelets, lockets, stylish things are available under us",
       "contactNo": "8591088076",
@@ -321,6 +322,8 @@ class _HomeSectionState extends State<HomeSection> {
     }
   ];
 
+
+
   bool isAdded=false;
 
   @override
@@ -332,124 +335,121 @@ class _HomeSectionState extends State<HomeSection> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              ///Categories
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Featured Products',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.black87,
-                  ),
+              ///Featured products
+        Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(
+          'Featured Products',
+          style: GoogleFonts.mcLaren(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black87,
+          ),
+        ),
+      ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: products.length,
+          itemBuilder: (context, index) {
+            final product = products[index];
+            final isAdded = widget.cart.contains(product);
+
+            return GestureDetector(
+              onTap: () {
+                widget.addToCart(products[index]);
+              },
+              child: Card(
+                elevation: 5, // Shadow for the card
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
                 ),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: products.length,
-                itemBuilder: (context, index) {
-                  final product = products[index];
-                  final isAdded = widget.cart.contains(product);
-
-                  return GestureDetector(
-                    onTap: () {
-
-
-                      widget.addToCart(products[index]);
-                    },
-                    child: Card(
-                      elevation: 5, // Shadow for the card
-                      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Product Image
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        products[index].image,
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
                       ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                    ),
+                    const SizedBox(width: 16), // Spacing between image and details
+                    // Product Details
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Product Image
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.asset(
-                              products[index].image,
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.cover,
+                          Text(
+                            products[index].name,
+                            style: GoogleFonts.mcLaren(  // Use mcLaren or any other Google Font
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black87,
                             ),
                           ),
-                          const SizedBox(width: 16), // Spacing between image and details
-                          // Product Details
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  products[index].name,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).brightness == Brightness.dark
-                                        ? Colors.white
-                                        : Colors.black87,
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  '₹${products[index].price}',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Theme.of(context).brightness == Brightness.dark
-                                        ? Colors.green[300] // Lighter green for dark theme
-                                        : Colors.green,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Add to Cart Button
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green, // Button color
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              onPressed: () {
-
-
-                                widget.addToCart(products[index]);
-
-                                // Show a SnackBar with the notification
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      '${products[index].name} added to cart!',
-                                      style: const TextStyle(color: Colors.white),
-                                    ),
-                                    backgroundColor: Colors.lightGreen,
-                                    duration: const Duration(seconds: 2),
-                                  ),
-                                );
-                              },
-                              child:  Text(
-                                isAdded?"Added":        'Add to Cart',
-                                style: TextStyle(color: Colors.white),
-                              ),
+                          const SizedBox(height: 5),
+                          Text(
+                            '₹${products[index].price}',
+                            style: GoogleFonts.mcLaren(  // Use mcLaren or any other Google Font
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.green[300] // Lighter green for dark theme
+                                  : Colors.green,
                             ),
                           ),
                         ],
                       ),
                     ),
-                  );
-                },
-              ),
+                    // Add to Cart Button
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green, // Button color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        onPressed: () {
+                          widget.addToCart(products[index]);
 
-              ///business
+                          // Show a SnackBar with the notification
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                '${products[index].name} added to cart!',
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              backgroundColor: Colors.lightGreen,
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          isAdded ? "Added" : 'Add to Cart',
+                          style: GoogleFonts.mcLaren(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+
+
+        ///business
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                 child: Column(
@@ -457,8 +457,8 @@ class _HomeSectionState extends State<HomeSection> {
                   children: [
                     Text(
                       'Recommended Businesses',
-                      style: TextStyle(
-                        fontSize: 22,
+                      style: GoogleFonts.mcLaren(
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).brightness == Brightness.dark
                             ? Colors.white
@@ -469,7 +469,9 @@ class _HomeSectionState extends State<HomeSection> {
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: recommendedBusinesses.length,
+                      itemCount: recommendedBusinesses.length >4
+                        ? 4
+                        : recommendedBusinesses.length,
                       itemBuilder: (context, index) {
                         final business = recommendedBusinesses[index];
                         return GestureDetector(
@@ -500,23 +502,15 @@ class _HomeSectionState extends State<HomeSection> {
                               ),
                               title: Text(
                                 business['name'],
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                                style: GoogleFonts.mcLaren(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                   color: Theme.of(context).brightness == Brightness.dark
                                       ? Colors.white
                                       : Colors.black87,
                                 ),
                               ),
-                              subtitle: Text(
-                                business['email'],
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Theme.of(context).brightness == Brightness.dark
-                                      ? Colors.grey[400]
-                                      : Colors.grey[600],
-                                ),
-                              ),
+
                               trailing: const Icon(
                                 Icons.arrow_forward_ios,
                                 color: Colors.blueAccent,
@@ -540,9 +534,9 @@ class _HomeSectionState extends State<HomeSection> {
                             ),
                           );
                         },
-                        child: const Text(
+                        child: Text(
                           'View All',
-                          style: TextStyle(
+                          style: GoogleFonts.mcLaren(
                             fontSize: 16,
                             color: Colors.blue,
                           ),
@@ -563,12 +557,12 @@ class _HomeSectionState extends State<HomeSection> {
                   children: [
                     Text(
                       'Recommended Services',
-                      style: TextStyle(
-                        fontSize: 22,
+                      style: GoogleFonts.mcLaren(
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).brightness == Brightness.dark
                             ? Colors.white
-                            : Colors.black87, // Text color adjusts to the theme
+                            : Colors.black87,
                       ),
                     ),
                     SizedBox(height: 12),
@@ -576,8 +570,8 @@ class _HomeSectionState extends State<HomeSection> {
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: recommendedServices.length > 3
-                          ? 3
+                      itemCount: recommendedServices.length > 4
+                          ? 4
                           : recommendedServices.length, // Show only 3 services
                       itemBuilder: (context, index) {
                         final service = recommendedServices[index];
@@ -591,7 +585,7 @@ class _HomeSectionState extends State<HomeSection> {
                             );
                           },
                           child: Card(
-                            elevation: 5.0,
+                            elevation: 5,
                             // Adds a subtle shadow effect for a modern look
                             margin: const EdgeInsets.symmetric(vertical: 8.0),
                             shape: RoundedRectangleBorder(
@@ -610,24 +604,24 @@ class _HomeSectionState extends State<HomeSection> {
                               ),
                               title: Text(
                                 service['name'], // Displaying service name
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                                style: GoogleFonts.mcLaren(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                   color: Theme.of(context).brightness == Brightness.dark
                                       ? Colors.white
-                                      : Colors.black87, // Text color based on theme
+                                      : Colors.black87,
                                 ),
                               ),
-                              subtitle: Text(
-                                service['description'],
+                              //subtitle: Text(
+                                //service['description'],
                                 // Displaying service description
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Theme.of(context).brightness == Brightness.dark
-                                      ? Colors.white70
-                                      : Colors.grey[600], // Adjust subtitle color for readability
-                                ),
-                              ),
+                                //style: TextStyle(
+                                  //fontSize: 14,
+                                 // color: Theme.of(context).brightness == Brightness.dark
+                                   //   ? Colors.white70
+                                     // : Colors.grey[600], // Adjust subtitle color for readability
+                                //),
+                              //),
                               trailing: const Icon(
                                 Icons.arrow_forward_ios,
                                 color: Colors.blueAccent,
@@ -651,9 +645,9 @@ class _HomeSectionState extends State<HomeSection> {
                             ),
                           );
                         },
-                        child: const Text(
+                        child: Text(
                           'View All',
-                          style: TextStyle(
+                          style: GoogleFonts.mcLaren(
                             fontSize: 16,
                             color: Colors.green,
                           ),

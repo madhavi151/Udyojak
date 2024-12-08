@@ -61,7 +61,7 @@ class BusinessDetailPage extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(vertical: 4),
                     child: ListTile(
                       leading:
-                      Image.asset(product.image, width: 50, height: 50),
+                      Image.asset(product.image, width: 150, height: 200),
                       title: Text(product.name),
                       subtitle: Text('₹${product.price.toStringAsFixed(2)}'),
                     ),

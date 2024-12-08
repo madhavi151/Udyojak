@@ -43,10 +43,7 @@ class _SearchSectionState extends State<SearchSection> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search Products'),
-        backgroundColor: isDarkMode ? Colors.black87 : Colors.lightGreen,
-      ),
+
       body: Column(
         children: [
           Padding(

@@ -125,7 +125,7 @@ class _ProfileSectionState extends State<ProfileSection> {
               context,
               icon: Icons.person,
               title: 'Personal Details',
-              subtitle: 'Username: $username\nEmail: $email\nMobile: $mobileNumber\nAddress: $address',
+              ///subtitle: 'Username: $username\nEmail: $email\nMobile: $mobileNumber\nAddress: $address',
               onTap: () {
                 Navigator.push(
                   context,
@@ -158,7 +158,7 @@ class _ProfileSectionState extends State<ProfileSection> {
               context,
               icon: Icons.dark_mode,
               title: 'Appearance Settings',
-              subtitle: 'Dark Mode: ${widget.isDarkMode ? 'Enabled' : 'Disabled'}',
+              ///subtitle: 'Dark Mode: ${widget.isDarkMode ? 'Enabled' : 'Disabled'}',
               onTap: () {
                 Navigator.push(
                   context,
@@ -201,15 +201,6 @@ class _ProfileSectionState extends State<ProfileSection> {
   Widget _buildProfileHeader(BuildContext context) {
     return Row(
       children: [
-        CircleAvatar(
-          radius: 40,
-          backgroundColor: Colors.green[200],
-          child: const Icon(
-            Icons.person,
-            size: 40,
-            color: Colors.white,
-          ),
-        ),
         const SizedBox(width: 20),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,

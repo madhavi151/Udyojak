@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
   void _toggleTheme(bool isDark) {
     setState(() {
       _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
-    });
+    }); 
   }
 
   @override

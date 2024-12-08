@@ -4,7 +4,7 @@ import 'HomeSection.dart';
 import 'ProfileSection.dart';
 import 'CartSection.dart';
 import 'SearchSection.dart';
-import 'EditPersonalDetailsPage.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> {
         primaryColor: Colors.red,
         hintColor: Colors.white,
         textTheme: TextTheme(
-          bodyMedium: TextStyle(
+          bodyMedium: GoogleFonts.mcLaren(
             fontSize: 16,
             color: _isDarkMode ? Colors.white : Colors.black,
           ),
@@ -110,7 +110,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
+  // Dismiss the keyboard when switching tabs
   void _onItemTapped(int index) {
+    FocusScope.of(context).unfocus(); // This dismisses the keyboard
+
     setState(() {
       _selectedIndex = index;
     });
@@ -119,7 +122,7 @@ class _HomePageState extends State<HomePage> {
   Widget _getPage() {
     switch (_selectedIndex) {
       case 0:
-        return HomeSection(addToCart: widget.addToCart , cart:widget.cart,);
+        return HomeSection(addToCart: widget.addToCart, cart: widget.cart,);
       case 1:
         return SearchSection(
           addToCart: widget.addToCart,
@@ -131,9 +134,7 @@ class _HomePageState extends State<HomePage> {
           removeFromCart: widget.removeFromCart,
           clearCart: widget.clearCart, // Passing clearCart to CartSection
           totalAmount: widget.totalAmount, // Pass totalAmount to CartSection
-         // Pass the fetched mobile number
         );
-
       case 3:
         final user = FirebaseAuth.instance.currentUser;
         final username = user?.displayName ?? "User";
@@ -144,55 +145,132 @@ class _HomePageState extends State<HomePage> {
           onDarkModeToggle: widget.onDarkModeToggle,
         );
       default:
-        return HomeSection(addToCart: widget.addToCart ,cart: widget.cart,);
+        return HomeSection(addToCart: widget.addToCart, cart: widget.cart,);
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = widget.isDarkMode;
+    final selectedColor = isDarkMode ? Colors.lightBlueAccent : Colors.deepOrange;
+    final unselectedColor = isDarkMode ? Colors.grey : Colors.black45;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Udyojak',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: GoogleFonts.mcLaren(
+            fontWeight: FontWeight.bold,
+            fontSize: 24, // Larger font size for better visibility
+            letterSpacing: 1.2, // Adds some space between letters for a more refined look
+            shadows: [
+              BoxShadow(
+                color: Colors.black26, // Subtle shadow for better readability
+                offset: Offset(0, 1), // Slight downward shadow
+                blurRadius: 3, // Soft shadow
+              ),
+            ],
+          ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.lightGreen,
-        elevation: 5,
+        backgroundColor: isDarkMode ? Colors.green[900] : Colors.green[600], // Darker shades for more professionalism
+        elevation: 5, // Keeps the shadow subtle for a sleek look
         actions: [
           IconButton(
             icon: Icon(
-                widget.isDarkMode ? Icons.nightlight_round : Icons.wb_sunny),
+              isDarkMode ? Icons.nightlight_round : Icons.wb_sunny,
+              size: 28, // Slightly larger icon size for better visibility
+            ),
             onPressed: () {
-              widget.onDarkModeToggle(!widget.isDarkMode);
+              widget.onDarkModeToggle(!isDarkMode);
             },
           ),
         ],
       ),
       body: _getPage(),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: Colors.red,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: isDarkMode ? Colors.grey[850] : Colors.white,
+          // Background color
+          borderRadius: BorderRadius.circular(25),
+          // Rounded corners
+          boxShadow: [
+            BoxShadow(
+              color: isDarkMode ? Colors.white.withOpacity(0.3) : Colors.black.withOpacity(0.2), // White shadow for dark mode
+              blurRadius: 10, // Blur effect for the shadow
+              offset: Offset(0, 4), // Shadow offset (slightly below)
+            ),
+          ],
+        ),
+        child: Material(
+          elevation: 5,
+          // Set elevation to 5 for the card-like effect
+          borderRadius: BorderRadius.circular(25),
+          // Keep rounded corners for the Material
+          child: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            selectedItemColor: selectedColor,
+            unselectedItemColor: unselectedColor,
+            backgroundColor: Colors.transparent,
+            // Make the background transparent
+            elevation: 0,
+            // Remove default elevation for BottomNavigationBar
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.search),
+                label: 'Search',
+              ),
+              BottomNavigationBarItem(
+                icon: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Icon(Icons.shopping_cart),
+                    if (widget.cart.isNotEmpty) ...[
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          padding: EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          constraints: BoxConstraints(
+                            minWidth: 18,
+                            minHeight: 18,
+                          ),
+                          child: Text(
+                            widget.cart.length.toString(),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                label: 'Cart',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: 'Profile',
+              ),
+            ],
+            type: BottomNavigationBarType.fixed,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Cart',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+        ),
       ),
     );
   }

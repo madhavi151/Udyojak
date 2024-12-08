@@ -47,12 +47,12 @@ class AllBusinessesPage extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                subtitle: Text(
-                  business['description'],
-                  style: const TextStyle(
-                    fontSize: 14,
-                  ),
-                ),
+                ///subtitle: Text(
+                  ///business['description'],
+                  ///style: const TextStyle(
+                    ///fontSize: 14,
+                  ///),
+                //),
                 trailing: const Icon(
                   Icons.arrow_forward_ios,
                   color: Colors.blueAccent,

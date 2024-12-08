@@ -12,6 +12,7 @@ dependencies:
   firebase_storage: ^12.3.6
   firebase_auth: ^5.3.3
   cloud_firestore: ^5.5.1
+  google_fonts: ^6.2.1
 
   flutter:
     sdk: flutter

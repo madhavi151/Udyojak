@@ -53,13 +53,7 @@ class AllRecommendedServicesPage extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  subtitle: Text(
-                    service['description'],
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
+
                   trailing: const Icon(
                     Icons.arrow_forward_ios,
                     color: Colors.blueAccent,
