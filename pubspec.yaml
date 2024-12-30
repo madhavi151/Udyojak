@@ -1,0 +1,92 @@
+name: Udyojak
+description: "A new Flutter project."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.0.0
+
+
+
+dependencies:
+  dio: ^5.7.0
+  firebase_core: ^3.8.0
+  firebase_storage: ^12.3.6
+  firebase_auth: ^5.3.3
+  cloud_firestore: ^5.5.1
+  google_fonts: ^6.2.1
+
+  flutter:
+    sdk: flutter
+  http: ^1.2.2
+  provider: ^6.0.5
+  carousel_slider: ^4.2.0
+  change_app_package_name: ^1.4.0
+  shared_preferences: ^2.3.3
+  flutter_secure_storage: ^9.2.2
+  supabase_flutter: ^2.8.1
+  image_picker: ^0.8.7
+
+dev_dependencies:
+
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/image/WelcomeLogo.jpg
+    - assets/image/cloth.jpg
+    - assets/image/jewellery.jpg
+    - assets/image/paper_quilling.webp
+    - assets/image/footwear.jpg
+    - assets/image/wall_art.jpg
+    - assets/image/scrunchies.webp
+    - assets/image/waffles.jpg
+    - assets/image/Artdea.png
+    - assets/image/Bridemakeup.webp
+    - assets/image/WelcomeLogo.jpg
+    - assets/image/dessertjunction.jpg
+    - assets/image/truffle.jpg
+    - assets/image/blackforest.jpg
+    - assets/image/caramel1.jpg
+    - assets/image/strawberry.jpg
+    - assets/image/mixfruit.jpg
+    - assets/image/pineapple.jpg
+    - assets/image/butter.jpg
+    - assets/image/biscoff.jpg
+    - assets/image/bluecake.jpg
+    - assets/image/3Dframes.jpg
+    - assets/image/keychain.jpg
+    - assets/image/heels.jpg
+    - assets/image/flips.jpg
+    - assets/image/coneheel.jpg
+    - assets/image/blockheel.jpg
+    - assets/image/handcraft.jpg
+    - assets/image/paintings.jpg
+    - assets/image/raisins.jpg
+    - assets/image/ss.jpg
+    - assets/image/Bridemakeup.webp
+    - assets/image/spa.jpg
+    - assets/image/massage.jpg
+    - assets/image/bride.jpg
+    - assets/image/wedding.jpg
+    - assets/image/shoot.jpg
+    - assets/image/splashscreen.jpg
+    - assets/image/photo.jpg
+    - assets/image/mauli.jpg
+    - assets/image/blackdates.jpg
+    - assets/image/dryfruits.jpg
+    - assets/image/farsan.jpg
+    - assets/image/bun.jpg
+    - assets/image/cupcake.jpg
+    - assets/image/donuts.jpg
+    - assets/image/bakes.jpg
+    - assets/image/ngo.jpg
+    - assets/image/painting.jpg
+    - assets/image/battery.jpg
+    - assets/image/crochet.jpg
+    - assets/image/clothbag.jpg
+
