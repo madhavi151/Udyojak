@@ -8,19 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(
-      anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3b3h6ZHFoZ2l0eGphZGNtbW1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM4NDk3OTUsImV4cCI6MjA0OTQyNTc5NX0.yIj3_vl2jzQ1lehwWStKQ8_RWiWWBVEfdSDkjUzYu4I",
-      url: "https://uwoxzdqhgitxjadcmmmr.supabase.co"
-  );
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: 'AIzaSyCq9Hv8p1W9w39gnuRyJZ2qPDIWdvtOQAM',
-      appId: '1:825527275199:android:f9e2768a3629024e6b000a',
-      messagingSenderId: '825527275199',
-      projectId: 'udyojak-ac670',
-      storageBucket: 'udyojak-ac670.firebasestorage.app',
-    ),
-  );
+ 
 
 
   runApp(const MyApp());
